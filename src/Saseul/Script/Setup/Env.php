@@ -70,14 +70,6 @@ class Env extends Script
             $this->askPrivateKey();
         }
 
-        $ask = $this->ask('Are you genesis node? [y/n] ');
-
-        if ($ask === 'y') {
-            $this->env['genesis']['address'] = $this->env['node']['address'];
-        } else {
-            $this->askGenesisAddress();
-        }
-
         $this->writeEnv();
     }
 
@@ -98,18 +90,6 @@ class Env extends Script
         $this->env['node']['address'] = $address;
     }
 
-    function askGenesisAddress() {
-        $address = $this->ask('Please enter genesis node address. ');
-
-        if (!Key::isValidAddressSize($address)) {
-            Logger::log("Invalid address size. ");
-            $this->askGenesisAddress();
-            return;
-        }
-
-        $this->env['genesis']['address'] = $address;
-    }
-
     function writeEnv()
     {
         if (!TypeChecker::structureCheck(Structure::ENV, $this->env))
@@ -127,7 +107,6 @@ class Env extends Script
         Logger::log('Node private key: '. $this->env['node']['private_key']);
         Logger::log('Node public key: '. $this->env['node']['public_key']);
         Logger::log('Node address: '. $this->env['node']['address']);
-        Logger::log('Genesis node address: '. $this->env['genesis']['address']);
         Logger::log('');
 
         file_put_contents(Directory::ENV_FILE, json_encode($this->env));
